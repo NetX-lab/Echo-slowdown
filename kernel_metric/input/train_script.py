@@ -30,7 +30,7 @@ def cleanup():
     dist.destroy_process_group()
 
 # Prepare model and random data
-def prepare(rank, world_size, cap_size, model_name, model_type, batchsize):
+def prepare(rank, world_size, cap_size, batchsize):
     print(f"debug: Rank {rank}: Preparing model and data")
     setup(rank, world_size)
 
@@ -41,7 +41,7 @@ def prepare(rank, world_size, cap_size, model_name, model_type, batchsize):
 
 
 # Training function
-def train(model, data_loader, rank, epochs, model_type, model_name, profile_model_iteration_time=False, model_iteration_time_output="", warmup_epochs=0):
+def train(model, data_loader, rank, epochs, profile_model_iteration_time=False, model_iteration_time_output="", warmup_epochs=0):
     print(f"debug: Rank {rank}: Starting training for {epochs} epochs")
     optimizer = optim.AdamW(model.parameters(), lr=2e-5)
 
@@ -108,10 +108,10 @@ def train(model, data_loader, rank, epochs, model_type, model_name, profile_mode
             avg_execution_time = execution_time / epochs
             print(f"Average execution time per single iteration: {avg_execution_time:.6f} seconds", file=file)
 
-def run_training(rank, world_size, cap_size, epochs, model_name, model_type, batchsize, profile_model_iteration_time=False, model_iteration_time_output="", warmup_epochs=0):
+def run_training(rank, world_size, cap_size, epochs, batchsize, profile_model_iteration_time=False, model_iteration_time_output="", warmup_epochs=0):
     print(f"debug: Rank {rank}: Running training process")
-    model, data_loader = prepare(rank, world_size, cap_size, model_name, model_type, batchsize)
-    train(model, data_loader, rank, epochs, model_type, model_name, profile_model_iteration_time=profile_model_iteration_time, model_iteration_time_output=model_iteration_time_output, warmup_epochs=warmup_epochs)  # Pass model_name to train
+    model, data_loader = prepare(rank, world_size, cap_size, batchsize)
+    train(model, data_loader, rank, epochs, profile_model_iteration_time=profile_model_iteration_time, model_iteration_time_output=model_iteration_time_output, warmup_epochs=warmup_epochs)
     cleanup()
     print(f"debug: Rank {rank}: Training process completed")
 
@@ -153,16 +153,12 @@ def main():
     print(f"world_size: {final_config['world_size']}")
     print(f"cap_size: {final_config['cap_size']}")
     print(f"epochs: {final_config['epochs']}")
-    print(f"model_name: {final_config['model_name']}")
-    print(f"model_type: {final_config['model_type']}")
     print(f"batchsize: {final_config['batchsize']}")
 
     # Extract parameters from the final configuration
     world_size = final_config['world_size']
     cap_size = final_config['cap_size']
     epochs = final_config['epochs']
-    model_name = final_config['model_name']
-    model_type = final_config['model_type']
     batchsize = final_config['batchsize']
 
     # profile mode model_time
@@ -174,7 +170,7 @@ def main():
         warmup_epochs = final_config['warmup_epochs']
     
     print("debug: Starting mp.spawn...")
-    mp.spawn(run_training, args=(world_size, cap_size, epochs, model_name, model_type, batchsize, profile_model_iteration_time, model_iteration_time_output, warmup_epochs), nprocs=world_size, join=True)
+    mp.spawn(run_training, args=(world_size, cap_size, epochs, batchsize, profile_model_iteration_time, model_iteration_time_output, warmup_epochs), nprocs=world_size, join=True)
     print("debug: mp.spawn completed")
     
 if __name__ == '__main__':
