@@ -1,7 +1,4 @@
 {
-  "stage": "kernel_metric",
-  "output_file_name": "test12345.csv",
-  "python_file": "train-task3.py",
   "world_size": 1,
   "cap_size": 2,
   "epochs": 3,

@@ -171,5 +171,6 @@ cython_debug/
 .pypirc
 
 # Output directory
+kernel_metric/temp/
 kernel_metric/output/
 

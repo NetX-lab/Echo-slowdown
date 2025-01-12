@@ -11,9 +11,10 @@ python_script="input/train_script.py"
 cuda_visible_devices=$(jq -r '.cuda_visible_devices' "$global_config")
 ncu_path=$(jq -r '.ncu_path' "$global_config")
 python_path=$(jq -r '.python_path' "$global_config")
-python_file=$(jq -r '.python_file' "$global_config")
 
-output_name="output/output"
+mkdir -p "temp"
+mkdir -p "output"
+output_name="temp/output"
 
 CUDA_VISIBLE_DEVICES=${cuda_visible_devices} ${ncu_path} -o ${output_name} \
   --profile-from-start off \

@@ -4,11 +4,12 @@ import os
 
 # Get the current directory
 current_directory = os.getcwd()
+temp_directory = os.path.join(current_directory, 'temp')
 output_directory = os.path.join(current_directory, 'output')
 
 # Search for file in the current directory ending with '_details.csv'
-details_csv = glob.glob(os.path.join(output_directory, "*_details.csv"))[0]
-kshortname_csv = glob.glob(os.path.join(output_directory, "*_kshortname.csv"))[0]
+details_csv = glob.glob(os.path.join(temp_directory, "*_details.csv"))[0]
+kshortname_csv = glob.glob(os.path.join(temp_directory, "*_kshortname.csv"))[0]
 
 details_df = pd.read_csv(details_csv)
 kshortname_df = pd.read_csv(kshortname_csv)
@@ -108,4 +109,4 @@ kshortname_df_filtered = kshortname_df[['ID', 'Kernel Name']]
 
 merged_df = pd.merge(kshortname_df_filtered, df_output, on='ID', how='inner')
 
-merged_df.to_csv('output/kernel_metric_output.csv', index=False)
+merged_df.to_csv(os.path.join(output_directory,'kernel_metric_output.csv'), index=False)
