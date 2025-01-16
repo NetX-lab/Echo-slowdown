@@ -1,0 +1,6 @@
+{
+  "world_size": 2,
+  "cap_size": 2,
+  "epochs": 3,
+  "batchsize": 16
+}

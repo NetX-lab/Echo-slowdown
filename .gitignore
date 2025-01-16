@@ -169,3 +169,10 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Output directory
+kernel_metric/temp/
+kernel_metric/output/
+slowdown_collection/temp/
+slowdown_collection/res/
+slowdown_collection/output/
