@@ -123,8 +123,10 @@ def merge_configs(config1, config2):
 # Main function
 def main():
     parser = argparse.ArgumentParser(description="Profile training with DDP")
+    parser.add_argument("--world_size", type=int, required=True, help="A mandatory integer argument representing the world size.")
     parser.add_argument("--local_config_file", type=str, required=True, help="Path to the primary configuration file")
     parser.add_argument("--global_config_file", type=str, required=True, help="Path to the global configuration file")
+    
     args = parser.parse_args()
 
     # Load the primary configuration file
@@ -146,20 +148,20 @@ def main():
             raise("Exception")
         else:
             print(f'PyTorch CUDA version: {torch.version.cuda} matches with CUDA version required in environment config.')
-    
-    # Print specific configuration values for debugging
-    print("Configuration Values:")
-    print(f"cuda version check: {final_config['cuda_version_check']}")
-    print(f"world_size: {final_config['world_size']}")
-    print(f"cap_size: {final_config['cap_size']}")
-    print(f"epochs: {final_config['epochs']}")
-    print(f"batchsize: {final_config['batchsize']}")
 
     # Extract parameters from the final configuration
-    world_size = final_config['world_size']
+    world_size = args.world_size
     cap_size = final_config['cap_size']
     epochs = final_config['epochs']
     batchsize = final_config['batchsize']
+
+    # Print specific configuration values for debugging
+    print("Configuration Values:")
+    print(f"cuda version check: {final_config['cuda_version_check']}")
+    print(f"world_size: {world_size}")
+    print(f"cap_size: {cap_size}")
+    print(f"epochs: {epochs}")
+    print(f"batchsize: {batchsize}")
 
     # profile mode model_time
     profile_model_iteration_time = False

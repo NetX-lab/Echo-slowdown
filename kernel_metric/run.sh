@@ -24,7 +24,7 @@ CUDA_VISIBLE_DEVICES=${cuda_visible_devices} ${ncu_path} -o ${output_name} \
   --device 0 \
   --nvtx \
   --section "SpeedOfLight" --section "LaunchStats" --section "Occupancy" --section "MemoryWorkloadAnalysis" \
-  ${python_path} ${python_script} --local_config_file=${local_config} --global_config_file=${global_config}
+  ${python_path} ${python_script} --world_size=1 --local_config_file=${local_config} --global_config_file=${global_config}
 
 # Convert the output file to CSV format
 ${ncu_path} -i "${output_name}.ncu-rep" --page details --csv --log-file "${output_name}_details.csv"
