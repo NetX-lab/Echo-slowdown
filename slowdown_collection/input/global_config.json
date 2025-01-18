@@ -1,0 +1,6 @@
+{
+	"cuda_visible_devices": "0,1",
+	"cuda_version_check": "11.8",
+	"nsys_path": "/home/eric/project/cuda-toolkit-12_6/cuda-toolkit-12.6/nsight-systems-2024.5.1/bin/nsys",
+	"python_path": "/home/eric/miniconda3/envs/torchgraph/bin/python"
+}

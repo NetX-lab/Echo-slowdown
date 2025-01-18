@@ -174,3 +174,6 @@ cython_debug/
 kernel_metric/temp/
 kernel_metric/output/
 
+slowdown_collection/temp/
+slowdown_collection/res/
+slowdown_collection/output/
