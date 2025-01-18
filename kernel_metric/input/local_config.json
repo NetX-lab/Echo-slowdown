@@ -1,0 +1,5 @@
+{
+  "cap_size": 2,
+  "epochs": 3,
+  "batchsize": 16
+}
