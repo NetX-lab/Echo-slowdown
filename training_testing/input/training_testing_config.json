@@ -1,0 +1,5 @@
+{
+    "test_data_file": "input/test_csv/merged_features.csv",
+    "test_baseline_ratio": 1.3,
+    "predict_only_include_overlapped_kernel": true
+}
