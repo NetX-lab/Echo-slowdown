@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Check if a parameter is provided
+# a parameter will be the world_size
 if [ -z "$1" ]; then
     echo "Error: No parameter provided."
     echo "Usage: $0 <string>"

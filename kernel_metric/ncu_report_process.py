@@ -87,17 +87,24 @@ output_dictionaries = []
 for id in unique_ids:
     df_kernel = details_df[details_df['ID'] == id]
 
+    # Filter out data based on conditions and check if the result is not empty
+    def get_metric_value(section_name, metric_name):
+        filtered_df = df_kernel[(df_kernel['Section Name'] == section_name) & (df_kernel['Metric Name'] == metric_name)].reset_index(drop=True)
+        if not filtered_df.empty:
+            return filtered_df.at[0, 'Metric Value']
+        else:
+            return None  # or a default value like 0 or 'N/A'
+
     new_row = {
         'ID': df_kernel.reset_index(drop=True).at[0, 'ID'],
-        # 'Kernel Name': df_kernel.reset_index(drop=True).at[0, 'Kernel Name'],
-        'Compute throughput': df_kernel[(df_kernel['Section Name'] == 'GPU Speed Of Light Throughput') & (df_kernel['Metric Name'] == 'Compute (SM) Throughput')].reset_index(drop=True).at[0, 'Metric Value'],
-        'SM': df_kernel[(df_kernel['Section Name'] == 'Launch Statistics') & (df_kernel['Metric Name'] == '# SMs')].reset_index(drop=True).at[0, 'Metric Value'],
-        'Memory throughput': df_kernel[(df_kernel['Section Name'] == 'GPU Speed Of Light Throughput') & (df_kernel['Metric Name'] == 'Memory Throughput')].reset_index(drop=True).at[0, 'Metric Value'],
-        'DRAM throughput': df_kernel[(df_kernel['Section Name'] == 'GPU Speed Of Light Throughput') & (df_kernel['Metric Name'] == 'DRAM Throughput')].reset_index(drop=True).at[0, 'Metric Value'],
-        'Achieved occupancy': df_kernel[(df_kernel['Section Name'] == 'Occupancy') & (df_kernel['Metric Name'] == 'Achieved Occupancy')].reset_index(drop=True).at[0, 'Metric Value'],
-        'Maximum occupancy': df_kernel[(df_kernel['Section Name'] == 'Occupancy') & (df_kernel['Metric Name'] == 'Theoretical Occupancy')].reset_index(drop=True).at[0, 'Metric Value'],
-        'L1 hit rate': df_kernel[(df_kernel['Section Name'] == 'Memory Workload Analysis') & (df_kernel['Metric Name'] == 'L1/TEX Hit Rate')].reset_index(drop=True).at[0, 'Metric Value'],
-        'L2 hit rate': df_kernel[(df_kernel['Section Name'] == 'Memory Workload Analysis') & (df_kernel['Metric Name'] == 'L2 Hit Rate')].reset_index(drop=True).at[0, 'Metric Value'],
+        'Compute throughput': get_metric_value('GPU Speed Of Light Throughput', 'Compute (SM) Throughput'),
+        'SM': get_metric_value('Launch Statistics', '# SMs'),
+        'Memory throughput': get_metric_value('GPU Speed Of Light Throughput', 'Memory Throughput'),
+        'DRAM throughput': get_metric_value('GPU Speed Of Light Throughput', 'DRAM Throughput'),
+        'Achieved occupancy': get_metric_value('Occupancy', 'Achieved Occupancy'),
+        'Maximum occupancy': get_metric_value('Occupancy', 'Theoretical Occupancy'),
+        'L1 hit rate': get_metric_value('Memory Workload Analysis', 'L1/TEX Hit Rate'),
+        'L2 hit rate': get_metric_value('Memory Workload Analysis', 'L2 Hit Rate'),
     }
 
     output_dictionaries.append(new_row)
@@ -109,4 +116,4 @@ kshortname_df_filtered = kshortname_df[['ID', 'Kernel Name']]
 
 merged_df = pd.merge(kshortname_df_filtered, df_output, on='ID', how='inner')
 
-merged_df.to_csv(os.path.join(output_directory,'kernel_metric_output.csv'), index=False)
+merged_df.to_csv(os.path.join(output_directory, 'kernel_metric_output.csv'), index=False)
