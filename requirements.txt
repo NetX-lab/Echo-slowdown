@@ -58,7 +58,7 @@ tokenizers==0.21.0
 torch==2.4.1
 torchaudio==2.4.1
 # Editable install with no version control (TorchGraph==0.1)
--e /root/workspace/simulator-data-collection/TG2/TorchGraph
+-e ./TorchGraph
 torchvision==0.19.1
 tornado==6.4.2
 tqdm==4.67.1
