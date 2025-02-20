@@ -1,0 +1,629 @@
+[
+    {
+        "name": "x",
+        "op": "x",
+        "input_nodes": [
+            "optimizer_zero"
+        ],
+        "output_nodes": [
+            "conv"
+        ],
+        "input_types": [],
+        "input_shapes": [],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                1,
+                3,
+                32,
+                32
+            ]
+        ]
+    },
+    {
+        "name": "conv",
+        "op": "torch.nn.modules.conv.Conv2d",
+        "input_nodes": [
+            "x"
+        ],
+        "output_nodes": [
+            "relu"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                1,
+                3,
+                32,
+                32
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                1,
+                10,
+                32,
+                32
+            ]
+        ],
+        "weight_type": "torch.float32",
+        "weight_shape": [
+            10,
+            3,
+            3,
+            3
+        ],
+        "bias_type": "torch.float32",
+        "bias_shape": [
+            10
+        ],
+        "attrs": {
+            "stride": [
+                1,
+                1
+            ],
+            "padding": [
+                1,
+                1
+            ],
+            "dilation": [
+                1,
+                1
+            ],
+            "groups": 1,
+            "padding_mode": "zeros",
+            "output_padding": [
+                0,
+                0
+            ],
+            "in_channels": 3,
+            "out_channels": 10,
+            "kernel_size": [
+                3,
+                3
+            ]
+        }
+    },
+    {
+        "name": "relu",
+        "op": "torch.nn.modules.activation.ReLU",
+        "input_nodes": [
+            "conv"
+        ],
+        "output_nodes": [
+            "size",
+            "view"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                1,
+                10,
+                32,
+                32
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                1,
+                10,
+                32,
+                32
+            ]
+        ],
+        "attrs": {
+            "inplace": false
+        }
+    },
+    {
+        "name": "size",
+        "op": "size",
+        "input_nodes": [
+            "relu"
+        ],
+        "output_nodes": [
+            "view"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                1,
+                10,
+                32,
+                32
+            ]
+        ],
+        "output_types": [],
+        "output_shapes": []
+    },
+    {
+        "name": "view",
+        "op": "view",
+        "input_nodes": [
+            "relu",
+            "size"
+        ],
+        "output_nodes": [
+            "linear"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                1,
+                10,
+                32,
+                32
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                1,
+                10240
+            ]
+        ]
+    },
+    {
+        "name": "linear",
+        "op": "torch.nn.modules.linear.Linear",
+        "input_nodes": [
+            "view"
+        ],
+        "output_nodes": [
+            "output"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                1,
+                10240
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                1,
+                5
+            ]
+        ],
+        "weight_type": "torch.float32",
+        "weight_shape": [
+            5,
+            10240
+        ],
+        "bias_type": "torch.float32",
+        "bias_shape": [
+            5
+        ],
+        "attrs": {
+            "in_features": 10240,
+            "out_features": 5
+        }
+    },
+    {
+        "name": "output",
+        "op": "output",
+        "input_nodes": [
+            "linear"
+        ],
+        "output_nodes": [
+            "AddmmBackward00"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                1,
+                5
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                1,
+                5
+            ]
+        ]
+    },
+    {
+        "name": "AddmmBackward00",
+        "op": "AddmmBackward0",
+        "input_nodes": [
+            "output"
+        ],
+        "output_nodes": [
+            "AccumulateGrad0",
+            "ViewBackward00",
+            "TBackward00"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                1,
+                5
+            ]
+        ],
+        "output_types": [
+            "torch.float32",
+            "torch.float32",
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                5
+            ],
+            [
+                1,
+                10240
+            ],
+            [
+                10240,
+                5
+            ]
+        ],
+        "attrs": {
+            "in_features": 10240,
+            "out_features": 5
+        }
+    },
+    {
+        "name": "AccumulateGrad0",
+        "op": "AccumulateGrad",
+        "input_nodes": [
+            "AddmmBackward00"
+        ],
+        "output_nodes": [
+            "optimizer_step"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                5
+            ]
+        ],
+        "output_types": [],
+        "output_shapes": []
+    },
+    {
+        "name": "TBackward00",
+        "op": "TBackward0",
+        "input_nodes": [
+            "AddmmBackward00"
+        ],
+        "output_nodes": [
+            "AccumulateGrad1"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                10240,
+                5
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                5,
+                10240
+            ]
+        ]
+    },
+    {
+        "name": "AccumulateGrad1",
+        "op": "AccumulateGrad",
+        "input_nodes": [
+            "TBackward00"
+        ],
+        "output_nodes": [
+            "optimizer_step"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                5,
+                10240
+            ]
+        ],
+        "output_types": [],
+        "output_shapes": []
+    },
+    {
+        "name": "ViewBackward00",
+        "op": "ViewBackward0",
+        "input_nodes": [
+            "AddmmBackward00"
+        ],
+        "output_nodes": [
+            "ReluBackward00"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                1,
+                10240
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                1,
+                10,
+                32,
+                32
+            ]
+        ]
+    },
+    {
+        "name": "ReluBackward00",
+        "op": "ReluBackward0",
+        "input_nodes": [
+            "ViewBackward00"
+        ],
+        "output_nodes": [
+            "ConvolutionBackward00"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                1,
+                10,
+                32,
+                32
+            ]
+        ],
+        "output_types": [
+            "torch.float32"
+        ],
+        "output_shapes": [
+            [
+                1,
+                10,
+                32,
+                32
+            ]
+        ],
+        "attrs": {
+            "inplace": false
+        }
+    },
+    {
+        "name": "ConvolutionBackward00",
+        "op": "ConvolutionBackward0",
+        "input_nodes": [
+            "ReluBackward00"
+        ],
+        "output_nodes": [
+            "AccumulateGrad2",
+            "AccumulateGrad3"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                1,
+                10,
+                32,
+                32
+            ]
+        ],
+        "output_types": [
+            null,
+            "torch.float32",
+            "torch.float32"
+        ],
+        "output_shapes": [
+            null,
+            [
+                10,
+                3,
+                3,
+                3
+            ],
+            [
+                10
+            ]
+        ],
+        "attrs": {
+            "stride": [
+                1,
+                1
+            ],
+            "padding": [
+                1,
+                1
+            ],
+            "dilation": [
+                1,
+                1
+            ],
+            "groups": 1,
+            "padding_mode": "zeros",
+            "output_padding": [
+                0,
+                0
+            ],
+            "in_channels": 3,
+            "out_channels": 10,
+            "kernel_size": [
+                3,
+                3
+            ]
+        }
+    },
+    {
+        "name": "AccumulateGrad2",
+        "op": "AccumulateGrad",
+        "input_nodes": [
+            "ConvolutionBackward00"
+        ],
+        "output_nodes": [
+            "optimizer_step"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                10,
+                3,
+                3,
+                3
+            ]
+        ],
+        "output_types": [],
+        "output_shapes": []
+    },
+    {
+        "name": "AccumulateGrad3",
+        "op": "AccumulateGrad",
+        "input_nodes": [
+            "ConvolutionBackward00"
+        ],
+        "output_nodes": [
+            "optimizer_step"
+        ],
+        "input_types": [
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                10
+            ]
+        ],
+        "output_types": [],
+        "output_shapes": []
+    },
+    {
+        "name": "optimizer_zero",
+        "op": "optimizer_zero",
+        "input_nodes": [],
+        "output_nodes": [
+            "x"
+        ],
+        "input_types": [
+            "torch.float32",
+            "torch.float32",
+            "torch.float32",
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                10,
+                3,
+                3,
+                3
+            ],
+            [
+                10
+            ],
+            [
+                5,
+                10240
+            ],
+            [
+                5
+            ]
+        ],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "lr": 0.01,
+            "momentum": 0,
+            "dampening": 0,
+            "weight_decay": 0,
+            "nesterov": false,
+            "maximize": false,
+            "foreach": null,
+            "differentiable": false
+        }
+    },
+    {
+        "name": "optimizer_step",
+        "op": "optimizer_step",
+        "input_nodes": [
+            "AccumulateGrad0",
+            "AccumulateGrad1",
+            "AccumulateGrad2",
+            "AccumulateGrad3"
+        ],
+        "output_nodes": [],
+        "input_types": [
+            "torch.float32",
+            "torch.float32",
+            "torch.float32",
+            "torch.float32"
+        ],
+        "input_shapes": [
+            [
+                10,
+                3,
+                3,
+                3
+            ],
+            [
+                10
+            ],
+            [
+                5,
+                10240
+            ],
+            [
+                5
+            ]
+        ],
+        "output_types": [],
+        "output_shapes": [],
+        "attrs": {
+            "lr": 0.01,
+            "momentum": 0,
+            "dampening": 0,
+            "weight_decay": 0,
+            "nesterov": false,
+            "maximize": false,
+            "foreach": null,
+            "differentiable": false
+        }
+    }
+]
