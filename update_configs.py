@@ -1,6 +1,7 @@
 import json
 import os
 import subprocess
+import torch
 
 def get_path(command):
     try:
@@ -19,9 +20,10 @@ def update_config(file_path, updates):
 
 def main():
     current_dir = os.getcwd()
+    cuda_version_installed = torch.version.cuda
     updates = {
         "cuda_visible_devices": os.getenv('CUDA_VISIBLE_DEVICES', '0,1'),
-        "cuda_version_check": "11.8",
+        "cuda_version_check": cuda_version_installed,
         "nsys_path": get_path('nsys'),
         "python_path": get_path('python'),
         "ncu_path": get_path('ncu')

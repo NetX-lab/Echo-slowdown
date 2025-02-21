@@ -14,8 +14,8 @@ cd echo_slowdown
 
 Setup Conda environment
 ```
-conda create --name simulator-echo --file requirements.txt
-conda activate simulator-echo
+conda env create -f environment.yml
+conda activate simulator_echo
 ```
 
 ## Configuration
@@ -28,6 +28,8 @@ This script will automatically detect the paths for `nsys`, `python`, and `ncu` 
 - `kernel_metric/input/global_config.json`
 - `merge/input/global_config.json`
 - `slowdown_collection/input/global_config.json`
+
+Additionally, it will check the installed CUDA version using PyTorch and update the `cuda_version_check` field in the configuration files.
 
 ## Usage
 Execute `run_all.sh`

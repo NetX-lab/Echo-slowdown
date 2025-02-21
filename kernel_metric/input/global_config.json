@@ -1,5 +1,5 @@
 {
-    "cuda_visible_devices": "0,1",
+    "cuda_visible_devices": "1,2",
     "cuda_version_check": "11.8",
     "ncu_path": "/usr/local/cuda/bin/ncu",
     "python_path": "/root/miniconda3/envs/simulator-tg2/bin/python",
