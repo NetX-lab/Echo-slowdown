@@ -37,7 +37,8 @@ fi
 cd ..
 
 # Copy merge output to training_testing input
-cp merge/output/* training_testing/input/
+cp merge/output/* training_testing/input/test_csv/
+cp merge/output/* training_testing/input/train_csv/
 
 # Run training_testing module
 echo "Running training_testing module..."
