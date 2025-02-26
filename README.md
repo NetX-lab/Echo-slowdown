@@ -1,8 +1,6 @@
 # echo_slowdown
 
-Author: 
-
-This script will collect kernel features and slowdown data using Nvidia Nsight Compute and Nvidia Nsight Systems and predict the slowdown rate.
+This repository contains the slowdown prediction module of [Echo: Simulating Distributed Training At Scale](https://arxiv.org/abs/2412.12487).
 
 ## Installation
 
@@ -19,7 +17,7 @@ conda activate simulator_echo
 ```
 
 ## Configuration
-Update the configuration by running the Python file
+Update the configuration by running the Python file:
 ```
 python update_configs.py
 ```
@@ -31,9 +29,13 @@ This script will automatically detect the paths for `nsys`, `python`, and `ncu` 
 
 Additionally, it will check the installed CUDA version using PyTorch and update the `cuda_version_check` field in the configuration files.
 
+Our script is tested on NVIDIA Nsight Compute CLI 2024.3.0.0 and NVIDIA Nsight Systems 2024.4.2.133.
+
 ## Usage
-Execute `run_all.sh`
+After configuration, execute `run_all.sh`
 ```
 sh ./run_all.sh
 ```
 
+## Output
+The trained model and prediction results are stored in `training_testing/output`, and intermediate results are stored in `output` folder of each submodule.
