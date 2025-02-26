@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import sys
 import json
 import math
+from prediction_api import SlowdownPredictor  # 导入 SlowdownPredictor 类
 
 # Load configuration from config.json
 with open('input/training_testing_config.json', 'r') as config_file:
@@ -41,24 +42,42 @@ dtest = xgb.DMatrix(X_test)
 
 # Perform prediction
 slowdown_predictions = model.predict(dtest)
-
 slowdown_predictions = pd.Series(slowdown_predictions)
-
-slowdown_predictions_clipped = slowdown_predictions.clip(lower=0) # set negative prediction to zero
+slowdown_predictions_clipped = slowdown_predictions.clip(lower=0)  # set negative prediction to zero
 
 print('slowdown_predictions.shape', slowdown_predictions.shape)
 print('test_data.shape', test_data.shape)
 
-calculated_duration = (1-test_data['overlap_ratio']) * test_data['ground_truth'] + test_data['overlap_ratio'] * test_data['ground_truth'] * (1+slowdown_predictions_clipped)
-
-calculated_1_3_duration_comparison = (1-test_data['overlap_ratio']) * test_data['ground_truth'] + test_data['overlap_ratio'] * test_data['ground_truth'] * (test_baseline_ratio) # compare with slowdown=test_baseline_ratio
+calculated_duration = (1 - test_data['overlap_ratio']) * test_data['ground_truth'] + test_data['overlap_ratio'] * test_data['ground_truth'] * (1 + slowdown_predictions_clipped)
+calculated_1_3_duration_comparison = (1 - test_data['overlap_ratio']) * test_data['ground_truth'] + test_data['overlap_ratio'] * test_data['ground_truth'] * (test_baseline_ratio)  # compare with slowdown=test_baseline_ratio
 
 print('calculated_duration.shape', calculated_duration.shape)
-
 print('type(slowdown_predictions), type(calculated_duration)', type(slowdown_predictions), type(calculated_duration))
 
+# Initialize SlowdownPredictor
+predictor = SlowdownPredictor(model_file)
 
-output_df = pd.concat([test_data['id'], test_data['kShortName'], (1-test_data['overlap_ratio']), test_data['ground_truth'], test_data['overlap_ratio'], test_data['ground_truth'], slowdown_predictions, slowdown_predictions_clipped, test_data['slowdown'], calculated_duration, calculated_1_3_duration_comparison, test_data['duration']], axis=1)
+# Check predictions for each row
+for index, row in X_test.iterrows():
+    input_features = row.to_dict()
+    input_features['ground_truth'] = test_data.loc[index, 'ground_truth']
+    input_overlap_ratio = test_data.loc[index, 'overlap_ratio']
+    
+    result = predictor.predict_slowdown(input_features, input_overlap_ratio)
+    
+    api_slowdown_prediction = result['predicted_slowdown_factor']
+    api_slowdown_prediction_clipped = result['predicted_slowdown_factor_clipped']
+    
+    original_slowdown_prediction = slowdown_predictions.iloc[index]
+    original_slowdown_prediction_clipped = slowdown_predictions_clipped.iloc[index]
+    
+    assert math.isclose(api_slowdown_prediction, original_slowdown_prediction, rel_tol=1e-6), f"Mismatch at index {index}: API {api_slowdown_prediction} vs Original {original_slowdown_prediction}"
+    assert math.isclose(api_slowdown_prediction_clipped, original_slowdown_prediction_clipped, rel_tol=1e-6), f"Mismatch at index {index}: API {api_slowdown_prediction_clipped} vs Original {original_slowdown_prediction_clipped}"
+
+print("All predictions match!")
+
+# The rest of the code remains unchanged
+output_df = pd.concat([test_data['id'], test_data['kShortName'], (1 - test_data['overlap_ratio']), test_data['ground_truth'], test_data['overlap_ratio'], test_data['ground_truth'], slowdown_predictions, slowdown_predictions_clipped, test_data['slowdown'], calculated_duration, calculated_1_3_duration_comparison, test_data['duration']], axis=1)
 
 output_df.columns = ['id', 'kShortName', '1-overlap_ratio', 'ground_truth duration without overlap', 'overlap_ratio', 'ground_truth duration without overlap', 'slowdown predictions', 'slowdown predictions clipped', 'ground truth slowdown', 'calculated duration with overlap', 'comparison using slowdown=test_baseline_ratio', 'ground truth duration with overlap']
 
@@ -80,8 +99,6 @@ out_full_df['baseline duration diff'] = out_full_df['comparison using slowdown=t
 out_full_df['baseline duration abs diff'] = out_full_df['baseline duration diff'].abs()
 out_full_df['baseline kernel error rate'] = out_full_df['baseline duration abs diff'] / out_full_df['ground truth duration with overlap']
 
-
-
 # calculate metrics
 
 our_slowdown_mae = mean_absolute_error(test_data['slowdown'], slowdown_predictions)
@@ -92,16 +109,16 @@ our_slowdown_clipped_mae = mean_absolute_error(test_data['slowdown'], slowdown_p
 our_slowdown_clipped_mse = mean_squared_error(test_data['slowdown'], slowdown_predictions_clipped)
 our_slowdown_clipped_rmse = math.sqrt(our_slowdown_clipped_mse)
 
-our_duration_mae = mean_absolute_error(test_data['duration'], calculated_duration) # ground truth duration with overlap, calculated duration with overlap
-our_duration_mse = mean_squared_error(test_data['duration'], calculated_duration) # ground truth duration with overlap, calculated duration with overlap
+our_duration_mae = mean_absolute_error(test_data['duration'], calculated_duration)  # ground truth duration with overlap, calculated duration with overlap
+our_duration_mse = mean_squared_error(test_data['duration'], calculated_duration)  # ground truth duration with overlap, calculated duration with overlap
 our_duration_rmse = math.sqrt(our_duration_mse)
 
 baseline_slowdown_mae = mean_absolute_error(test_data['slowdown'], [test_baseline_ratio for x in range(len(test_data['slowdown']))])
 baseline_slowdown_mse = mean_squared_error(test_data['slowdown'], [test_baseline_ratio for x in range(len(test_data['slowdown']))])
 baseline_slowdown_rmse = math.sqrt(baseline_slowdown_mse)
 
-baseline_duration_mae = mean_absolute_error(test_data['duration'], calculated_1_3_duration_comparison) # ground truth duration with overlap, calculated duration with overlap
-baseline_duration_mse = mean_squared_error(test_data['duration'], calculated_1_3_duration_comparison) # ground truth duration with overlap, calculated duration with overlap
+baseline_duration_mae = mean_absolute_error(test_data['duration'], calculated_1_3_duration_comparison)  # ground truth duration with overlap, calculated duration with overlap
+baseline_duration_mse = mean_squared_error(test_data['duration'], calculated_1_3_duration_comparison)  # ground truth duration with overlap, calculated duration with overlap
 baseline_duration_rmse = math.sqrt(baseline_duration_mse)
 
 sum_calculated_duration_with_overlap = output_df['calculated duration with overlap'].sum()
@@ -173,7 +190,6 @@ with open(f'{output_base_directory}/output_metrics.txt', 'w') as f:
 
 # Restore the original standard output
 sys.stdout = original_stdout
-
 
 # save output df to file
 test_data_file_suffix = test_data_file.split('/')[-1].split('.')[0]
