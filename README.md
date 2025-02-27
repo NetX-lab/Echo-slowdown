@@ -4,22 +4,38 @@ This repository contains the slowdown prediction module of [Echo: Simulating Dis
 
 ## Project Overview
 
-The Echo Slowdown Prediction Module consists of three main components:
+The Echo Slowdown Prediction Module is designed to predict the performance impact of kernel overlaps in distributed training scenarios. The system consists of three core components:
 
 1. **Kernel Metric Collection**
-   - Collects kernel execution metrics using NVIDIA Nsight tools
-   - Extracts key performance characteristics of individual kernels
-   - Generates baseline metrics for non-overlapping execution
+   - Utilizes NVIDIA Nsight Compute and Nsight Systems to profile GPU kernels
+   - Captures detailed execution metrics including:
+     * Kernel duration
+     * Memory bandwidth utilization
+     * Compute throughput
+     * Instruction mix statistics
+   - Generates baseline performance profiles for isolated kernel execution
+   - Outputs structured JSON files containing raw kernel metrics
 
-2. **Merge Module**
-   - Combines metrics from overlapping kernel executions
-   - Creates training datasets with various overlap scenarios
-   - Handles data preprocessing and feature engineering
+2. **Slowdown Collection**
+   - Analyzes kernel behavior under various overlap scenarios
+   - Measures actual slowdown factors through controlled experiments
+   - Collects data on:
+     * Resource contention patterns
+     * Memory access interference
+     * Compute unit saturation
+   - Generates ground truth data for model training and validation
 
-3. **Slowdown Prediction**
-   - Trains machine learning models to predict kernel slowdown
-   - Evaluates model performance on different hardware configurations
-   - Provides prediction results for simulation purposes
+3. **Training & Testing**
+   - Implements machine learning models for slowdown prediction
+   - Features include:
+     * Multi-layer perceptron (MLP) regression
+     * Gradient boosting decision trees
+     * Feature importance analysis
+   - Provides comprehensive evaluation metrics:
+     * Mean absolute percentage error (MAPE)
+     * R-squared scores
+     * Prediction error distribution
+   - Outputs trained models and prediction results for integration with the Echo simulator
 
 ## Installation
 
