@@ -7,7 +7,7 @@ import torch.optim as optim
 from torch.nn.parallel import DistributedDataParallel as DDP
 import torch.multiprocessing as mp
 from torchvision import models
-import transformer
+from utils import transformer
 import json  # For reading the config files
 import time
 import sys

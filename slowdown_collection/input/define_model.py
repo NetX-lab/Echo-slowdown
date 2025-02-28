@@ -1,4 +1,4 @@
-import transformer
+from utils import transformer
 import torch
 from torch.nn.parallel import DistributedDataParallel as DDP
 

@@ -22,7 +22,7 @@ def main():
     current_dir = os.getcwd()
     cuda_version_installed = torch.version.cuda
     updates = {
-        "cuda_visible_devices": os.getenv('CUDA_VISIBLE_DEVICES', '2,3'),
+        "cuda_visible_devices": os.getenv('CUDA_VISIBLE_DEVICES', '0,1'),
         "cuda_version_check": cuda_version_installed,
         "nsys_path": get_path('nsys'),
         "python_path": get_path('python'),

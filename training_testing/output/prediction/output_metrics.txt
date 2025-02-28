@@ -1,24 +1,24 @@
-Our MAE of slowdown (original) 2.039476107451521
-Our MSE of slowdown (original) 16.362539331138994
-Our RMSE of slowdown (original) 4.045063575660955
-Our MAE of slowdown (clipped) 1.9310034329701493
-Our MSE of slowdown (clipped) 15.947602740266182
-Our RMSE of slowdown (clipped) 3.993444971483416
-Our MAE of duration 46983.79530916845
-Our MSE of duration 8939984931.607676
-Our RMSE of duration 94551.49354509254
-Baseline MAE of slowdown 2.17839372832984
-Baseline MSE of slowdown 12.646498501122803
-Baseline RMSE of slowdown 3.556191572612871
-Baseline MAE of duration 61587.31278146102
-Baseline MSE of duration 11768617664.606665
-Baseline RMSE of duration 108483.2598358229
-Sum of calculated duration with overlap: 176976461.0 (Error rate: -11.063950253391148%)
-Sum of comparison using slowdown=test_baseline_ratio: 202722674.0967695 (Error rate: 1.8743042230676472%)
-Sum of ground truth duration with overlap: 198992941
-Our 0.05 error: 0.23667377398720682
-Baseline 0.05 error: 0.2025586353944563
-Our 0.1 error: 0.4136460554371002
-Baseline 0.1 error: 0.2601279317697228
-Our 0.15 error: 0.4946695095948827
-Baseline 0.15 error: 0.32196162046908317
+Our MAE of slowdown (original) 1.1174428876295175
+Our MSE of slowdown (original) 15.038093600726505
+Our RMSE of slowdown (original) 3.8778980905545346
+Our MAE of slowdown (clipped) 1.1163005969562176
+Our MSE of slowdown (clipped) 15.010386688475997
+Our RMSE of slowdown (clipped) 3.874324029876179
+Our MAE of duration 40721.85743544673
+Our MSE of duration 14862800101.869287
+Our RMSE of duration 121913.08421112677
+Baseline MAE of slowdown 1.844206719588644
+Baseline MSE of slowdown 14.404263396323113
+Baseline RMSE of slowdown 3.795294902418403
+Baseline MAE of duration 67292.43908355759
+Baseline MSE of duration 23216354120.155777
+Baseline RMSE of duration 152369.1376892177
+Sum of calculated duration with overlap: 128818133.05879396 (Error rate: -9.024684323336803%)
+Sum of comparison using slowdown=test_baseline_ratio: 148867994.16274637 (Error rate: 5.135142402088636%)
+Sum of ground truth duration with overlap: 141596797
+Our 0.05 error: 0.5965346534653465
+Baseline 0.05 error: 0.17326732673267325
+Our 0.1 error: 0.6806930693069307
+Baseline 0.1 error: 0.2301980198019802
+Our 0.15 error: 0.7178217821782178
+Baseline 0.15 error: 0.2722772277227723
