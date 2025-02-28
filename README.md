@@ -123,17 +123,22 @@ The pipeline generates the following outputs:
 echo_slowdown/
 ├── training_testing/
 │   └── output/
-│       ├── models/         # Trained ML models
-│       ├── predictions/    # Prediction results
-│       └── evaluation/     # Model performance metrics
+│       ├── train_dataset.csv         # Processed training dataset that suits the input format of the XGBoost model
+│       ├── xgb_model.json    # Trained XGBoost model
+│       └── prediction/     # Model predictions
+│           ├── output_df_merged_features.csv         # Simplified output of slowdown predictions
+│           ├── output_full_df_merged_features.csv        # Detailed output of slowdown predictions
+│           ├── output_metrics.txt         # Evaluation metrics such as MAE, MSE and RMSE
+│           └── feature_importance_merged_features.png         # Plot of feature importance
 ├── kernel_metric/
 │   └── output/
-│       ├── raw_metrics/    # Raw kernel metrics
-│       └── processed/      # Processed kernel data
+│       └── kernel_metric_output.csv    # Profiled kernel metrics
+├── slowdown_collection/
+│   └── output/
+│       └── slowdown_stats_output_device_0.xlsx    # Profiled slowdown statistics
 ├── merge/
 │   └── output/
-│       ├── datasets/       # Combined datasets
-│       └── features/       # Engineered features
+│       └── merged_features.csv       # Combined kernel metrics and slowdown statistics, aligned by kernel name
 ```
 
 
