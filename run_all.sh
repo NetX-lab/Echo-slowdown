@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Set PYTHONPATH
+export PYTHONPATH=~/echo_slowdown:$PYTHONPATH
+
 # Run kernel_metric module
 echo "Running kernel_metric module..."
 cd kernel_metric

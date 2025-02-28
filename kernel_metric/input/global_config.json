@@ -1,7 +1,7 @@
 {
-    "cuda_visible_devices": "2,3",
+    "cuda_visible_devices": "0,1",
     "cuda_version_check": "12.1",
     "ncu_path": "/usr/local/cuda/bin/ncu",
-    "python_path": "/root/miniconda3/envs/simulator-echo/bin/python",
+    "python_path": "/root/miniconda3/envs/simulator_echo/bin/python",
     "nsys_path": "/usr/local/bin/nsys"
 }

@@ -11,6 +11,7 @@ dependencies:
   - tqdm=4.67.1
   - transformers=4.48.1
   - xgboost=2.1.0
+  - pandas=2.2.3
   - pip:
       - asttokens==3.0.0
       - attrs==25.1.0
@@ -75,4 +76,3 @@ dependencies:
       - wheel==0.45.1
       - yarg==0.1.9
       - openpyxl == 3.1.5
-      - -e ./TorchGraph
