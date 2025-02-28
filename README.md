@@ -60,10 +60,12 @@ The Echo Slowdown Prediction Module is designed to predict the performance impac
     ```
 
 ## Configuration
+
 Update the configuration by running the Python file:
-    ```bash
-    python update_configs.py
-    ```
+  ```bash
+  python update_configs.py
+  ```
+
 
 This script will automatically detect the paths for `nsys`, `python`, and `ncu` using the `which` command and update the `global_config.json` files in the following directories:
 - `kernel_metric/input/global_config.json`
