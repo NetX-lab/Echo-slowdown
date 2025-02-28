@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Set PYTHONPATH
-export PYTHONPATH=~/echo_slowdown:$PYTHONPATH
+SCRIPT_DIR=$(cd $(dirname "$0") && pwd)
+export PYTHONPATH="$SCRIPT_DIR:$PYTHONPATH"
 
 # Run kernel_metric module
 echo "Running kernel_metric module..."
