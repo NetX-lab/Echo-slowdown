@@ -178,7 +178,7 @@ If you use this module in your research, please cite our paper:
 
 ## Contact
 
-Please email Yicheng Feng (<yichengfeng@link.cuhk.edu.hk>) or Kin Hang Sew (<kh.sew@my.cityu.edu.hk>) if you have any questions.
+Please email Yicheng Feng (<yichengfeng@link.cuhk.edu.hk>) or Kin Hang Sew (<ericskh@link.cuhk.edu.hk>) if you have any questions.
 
 
 ## License
