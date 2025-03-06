@@ -112,10 +112,6 @@ You can run individual modules separately:
 
 
 
-
-
-
-
 ## Output
 The pipeline generates the following outputs:
 
@@ -179,6 +175,13 @@ If you use this module in your research, please cite our paper:
 }
 ```
 
+
+## Contact
+
+Please email Yicheng Feng (<yichengfeng@link.cuhk.edu.hk>) or Kin Hang Sew (<kh.sew@my.cityu.edu.hk>) if you have any questions.
+
+
 ## License
 
 This project is licensed under the BSD-3-Clause license - see the [LICENSE](LICENSE) file for details.
+
