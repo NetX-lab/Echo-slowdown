@@ -183,5 +183,5 @@ Please email Yicheng Feng (<yichengfeng@link.cuhk.edu.hk>) or Kin Hang Sew (<eri
 
 ## License
 
-This project is licensed under the BSD-3-Clause license - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT license - see the [LICENSE](LICENSE) file for details.
 
