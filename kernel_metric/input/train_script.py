@@ -144,7 +144,7 @@ def main():
     if final_config['cuda_version_check']:
         if torch.version.cuda != final_config['cuda_version_check']:
             print(f'PyTorch CUDA version mismatch with CUDA version required in environment config!')
-            print(f'Expected {final_config['cuda_version_check']}, but using {torch.version.cuda}.')
+            print(f"Expected {final_config['cuda_version_check']}, but using {torch.version.cuda}.")
             raise("Exception")
         else:
             print(f'PyTorch CUDA version: {torch.version.cuda} matches with CUDA version required in environment config.')

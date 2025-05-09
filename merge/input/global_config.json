@@ -1,5 +1,5 @@
 {
-    "python_path": "/root/miniconda3/envs/simulator_echo/bin/python",
+    "python_path": "/root/miniconda3/envs/58test/bin/python",
     "cuda_visible_devices": "0,1",
     "cuda_version_check": "12.1",
     "nsys_path": "/usr/local/bin/nsys",

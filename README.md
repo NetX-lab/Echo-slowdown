@@ -49,13 +49,13 @@ The Echo Slowdown Prediction Module is designed to predict the performance impac
 
 1. Clone git repository
     ```bash
-    git clone https://github.com/ericskh2/echo_slowdown.git
-    cd echo_slowdown
+    git clone https://github.com/NetX-lab/Echo-slowdown.git
+    cd Echo-slowdown
     ```
 
 2. Setup Conda environment
     ```bash
-    conda env create -f environment.yml
+    conda env create -f environment.yaml
     conda activate simulator_echo
     ```
 
