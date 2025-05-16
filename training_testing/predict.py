@@ -185,8 +185,8 @@ with open(f'{output_base_directory}/output_metrics.txt', 'w') as f:
     print(f'Sum of ground truth duration with overlap: {sum_ground_truth_duration_with_overlap}')
 
     for x in kernel_error_rate_bounds_count_rates:
-        print(f'Our {x['kernel_error_rate_bound']} error: {x['our_kernel_error_rate_bounds_count_rate']}')
-        print(f'Baseline {x['kernel_error_rate_bound']} error: {x['baseline_kernel_error_rate_bounds_count_rate']}')
+        print(f"Our {x['kernel_error_rate_bound']} error: {x['our_kernel_error_rate_bounds_count_rate']}")
+        print(f"Baseline {x['kernel_error_rate_bound']} error: {x['baseline_kernel_error_rate_bounds_count_rate']}")
 
 # Restore the original standard output
 sys.stdout = original_stdout
