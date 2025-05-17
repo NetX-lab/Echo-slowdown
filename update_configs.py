@@ -32,7 +32,8 @@ def main():
     config_files = [
         os.path.join(current_dir, 'kernel_metric/input/global_config.json'),
         os.path.join(current_dir, 'merge/input/global_config.json'),
-        os.path.join(current_dir, 'slowdown_collection/input/global_config.json')
+        os.path.join(current_dir, 'slowdown_collection/input/global_config.json'),
+        os.path.join(current_dir, 'training_testing/input/global_config.json')
     ]
 
     for config_file in config_files:

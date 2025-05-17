@@ -144,10 +144,10 @@ def main():
     if final_config['cuda_version_check']:
         if torch.version.cuda != final_config['cuda_version_check']:
             print(f'PyTorch CUDA version mismatch with CUDA version required in environment config!')
-            print(f'Expected {final_config['cuda_version_check']}, but using {torch.version.cuda}.')
+            print(f"Expected {final_config['cuda_version_check']}, but using {torch.version.cuda}.")
             raise("Exception")
         else:
-            print(f'PyTorch CUDA version: {torch.version.cuda} matches with CUDA version required in environment config.')
+            print(f"PyTorch CUDA version: {torch.version.cuda} matches with CUDA version required in environment config.")
 
     # Extract parameters from the final configuration
     world_size = args.world_size
