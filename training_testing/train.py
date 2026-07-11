@@ -1,13 +1,18 @@
+import json
+
+import numpy as np
 import pandas as pd
 import xgboost as xgb
-from sklearn.model_selection import KFold, train_test_split
 from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import KFold, train_test_split
 from sklearn.preprocessing import StandardScaler
-import numpy as np
 
 # Load the data
-data = pd.read_csv('output/train_dataset.csv')
-model_save_path = 'output/xgb_model.json'
+DATASET_PATH = 'output/train_dataset.csv'
+MODEL_SAVE_PATH = 'output/xgb_model.json'
+SCALER_SAVE_PATH = 'output/standard_scaler.json'
+
+data = pd.read_csv(DATASET_PATH)
 
 # Separate features and target
 X = data.drop(columns=['slowdown'])
@@ -23,6 +28,17 @@ X_train_val, X_test, y_train_val, y_test = train_test_split(X, y, test_size=0.2,
 scaler = StandardScaler()
 X_train_val_normalized = scaler.fit_transform(X_train_val)
 X_test_normalized = scaler.transform(X_test)
+
+with open(SCALER_SAVE_PATH, 'w', encoding='utf-8') as handle:
+    json.dump(
+        {
+            'feature_names': list(X.columns),
+            'mean': scaler.mean_.tolist(),
+            'scale': scaler.scale_.tolist(),
+        },
+        handle,
+        indent=2,
+    )
 
 # Convert normalized features back to DataFrames to keep column names
 X_train_val = pd.DataFrame(X_train_val_normalized, columns=X.columns)
@@ -41,13 +57,13 @@ mse_scores = []
 for train_index, val_index in kf.split(X_train_val):
     X_train, X_val = X_train_val.iloc[train_index], X_train_val.iloc[val_index]
     y_train, y_val = y_train_val.iloc[train_index], y_train_val.iloc[val_index]
-    
+
     # Train the model
     xgb_model.fit(X_train, y_train)
-    
+
     # Predict on the validation set
     y_pred = xgb_model.predict(X_val)
-    
+
     # Calculate the Mean Squared Error for the validation set
     mse = mean_squared_error(y_val, y_pred)
     mse_scores.append(mse)
@@ -60,7 +76,7 @@ print(f"Average MSE (validation set): {np.mean(mse_scores)}")
 xgb_model.fit(X_train_val, y_train_val)
 
 # Save the trained model to a file
-xgb_model.save_model(model_save_path)
+xgb_model.save_model(MODEL_SAVE_PATH)
 
 # Predict on the test set
 y_test_pred = xgb_model.predict(X_test)
@@ -71,11 +87,11 @@ print(f"Test MSE: {test_mse}")
 
 # Load the saved model (for future use)
 xgb_model_loaded = xgb.XGBRegressor()
-xgb_model_loaded.load_model(model_save_path)
+xgb_model_loaded.load_model(MODEL_SAVE_PATH)
 
 # Make predictions with the loaded model
 y_test_pred_loaded = xgb_model_loaded.predict(X_test)
 
 # Check if the loaded model gives the same predictions
-assert np.allclose(y_test_pred, y_test_pred_loaded), "The predictions from the loaded model differ!"
-print("Model loaded successfully and predictions match.")
+assert np.allclose(y_test_pred, y_test_pred_loaded), 'The predictions from the loaded model differ!'
+print('Model loaded successfully and predictions match.')

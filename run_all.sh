@@ -1,57 +1,41 @@
 #!/bin/bash
+set -euo pipefail
 
-# Set PYTHONPATH
-SCRIPT_DIR=$(cd $(dirname "$0") && pwd)
-export PYTHONPATH="$SCRIPT_DIR:$PYTHONPATH"
+SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
+export PYTHONPATH="$SCRIPT_DIR:${PYTHONPATH:-}"
 
-# Run kernel_metric module
-echo "Running kernel_metric module..."
-cd kernel_metric
-sh run.sh
-if [ $? -ne 0 ]; then
-    echo "Error: kernel_metric module failed."
-    exit 1
+skip_kernel_metric=${SKIP_KERNEL_METRIC:-0}
+
+if [ "$skip_kernel_metric" = "1" ]; then
+    echo "Skipping kernel_metric module and reusing merge/input/kernel_metric_output.csv"
+    if [ ! -f "$SCRIPT_DIR/merge/input/kernel_metric_output.csv" ]; then
+        echo "Error: merge/input/kernel_metric_output.csv is required when SKIP_KERNEL_METRIC=1."
+        exit 1
+    fi
+else
+    echo "Running kernel_metric module..."
+    cd "$SCRIPT_DIR/kernel_metric"
+    bash run.sh
+    cd "$SCRIPT_DIR"
+    cp kernel_metric/output/* merge/input/
 fi
-cd ..
 
-# Copy kernel_metric output to merge input 
-cp kernel_metric/output/* merge/input/
-
-# Run slowdown_collection module
 echo "Running slowdown_collection module..."
-cd slowdown_collection
-sh run.sh
-if [ $? -ne 0 ]; then
-    echo "Error: slowdown_collection module failed."
-    exit 1
-fi
-cd ..
-
-# Copy slowdown_collection output to merge input
+cd "$SCRIPT_DIR/slowdown_collection"
+bash run.sh
+cd "$SCRIPT_DIR"
 cp slowdown_collection/output/* merge/input/
 
-# Run merge module
 echo "Running merge module..."
-cd merge
-sh run.sh
-if [ $? -ne 0 ]; then
-    echo "Error: merge module failed."
-    exit 1
-fi
-cd ..
-
-# Copy merge output to training_testing input
+cd "$SCRIPT_DIR/merge"
+bash run.sh
+cd "$SCRIPT_DIR"
 cp merge/output/* training_testing/input/test_csv/
 cp merge/output/* training_testing/input/train_csv/
 
-# Run training_testing module
 echo "Running training_testing module..."
-cd training_testing
-sh run.sh
-if [ $? -ne 0 ]; then
-    echo "Error: training_testing module failed."
-    exit 1
-fi
-cd ..
+cd "$SCRIPT_DIR/training_testing"
+bash run.sh
+cd "$SCRIPT_DIR"
 
 echo "All modules ran successfully."

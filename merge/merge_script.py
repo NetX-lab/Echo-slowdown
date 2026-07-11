@@ -1,66 +1,78 @@
-import pandas as pd
-import os
-import glob
 import argparse
-import json
+from pathlib import Path
 
-# Set up argument parser
-parser = argparse.ArgumentParser(description='Merge Excel and CSV based on kernel names.')
-parser.add_argument('--output', type=str, default='merged_file.csv', help='Path to save the merged CSV file.')
-args = parser.parse_args()
+import pandas as pd
 
-cwd = os.getcwd()
 
-slowdown_file = 'input/slowdown_stats_output_device_0.xlsx'
-features_file = 'input/kernel_metric_output.csv'
-output_path = args.output
+SLOWDOWN_FILE = Path('input/slowdown_stats_output_device_0.xlsx')
+FEATURES_FILE = Path('input/kernel_metric_output.csv')
+SLOWDOWN_KERNEL_COL = 'kShortName'
+FEATURES_KERNEL_COL = 'Kernel Name'
+_HELPER_CANONICAL_COL = '_canonical_kernel_name'
+_HELPER_OCCURRENCE_COL = '_kernel_occurrence_index'
+_NORMALIZATION_SUFFIXES = (
+    '_vectorized',
+    '_aligned16_contig',
+    '_with_index',
+)
 
-slowdown_kernelname_col = 'kShortName'
-# features_kernelname_col = 'Function Name'
-features_kernelname_col = 'Kernel Name'
 
-# Read the CSV files into DataFrames
-df1 = pd.read_excel(slowdown_file)
-df2 = pd.read_csv(features_file)
+def normalize_kernel_name(name: object) -> str:
+    kernel_name = str(name)
+    for suffix in _NORMALIZATION_SUFFIXES:
+        if kernel_name.endswith(suffix):
+            kernel_name = kernel_name[: -len(suffix)]
+    return kernel_name
 
-print('df1.head()', df1.head())
 
-# Initialize pointers for both dataframes
-pointer1 = 0
-pointer2 = 0
-merged_data = []
+def _with_join_keys(dataframe: pd.DataFrame, kernel_name_col: str) -> pd.DataFrame:
+    keyed_dataframe = dataframe.copy()
+    keyed_dataframe[_HELPER_CANONICAL_COL] = keyed_dataframe[kernel_name_col].map(normalize_kernel_name)
+    keyed_dataframe[_HELPER_OCCURRENCE_COL] = keyed_dataframe.groupby(_HELPER_CANONICAL_COL).cumcount()
+    return keyed_dataframe
 
-def cmp_name(name1, name2):
-    if name1 == name2:
-        return True
-    return False
 
-# Loop until one of the DataFrames is fully traversed
-while pointer1 < len(df1) and pointer2 < len(df2):
-    name1 = df1.loc[pointer1, slowdown_kernelname_col]
-    name2 = df2.loc[pointer2, features_kernelname_col]
-    
-    # print(name1, name2)
+def merge_features(slowdown_df: pd.DataFrame, features_df: pd.DataFrame) -> pd.DataFrame:
+    keyed_slowdown_df = _with_join_keys(slowdown_df, SLOWDOWN_KERNEL_COL)
+    keyed_features_df = _with_join_keys(features_df, FEATURES_KERNEL_COL)
 
-    if cmp_name(name1, name2):
-        # If the names match, merge the rows
-        merged_row = pd.concat([df1.loc[pointer1], df2.loc[pointer2]], axis=0)
-        merged_data.append(merged_row)
-        pointer1 += 1
-        pointer2 += 1
-    else:
-        # Move pointer1 for now to match the next name in df1
-        pointer1 += 1
+    merged_df = keyed_slowdown_df.merge(
+        keyed_features_df,
+        on=[_HELPER_CANONICAL_COL, _HELPER_OCCURRENCE_COL],
+        how='inner',
+        suffixes=('', '_feature'),
+        sort=False,
+    )
 
-if pointer2 < len(df2):
-    print('last unmatched', pointer2, df2.loc[pointer2, features_kernelname_col])
-else:
-    print('All found')
+    if merged_df.empty:
+        raise RuntimeError(
+            'No matched kernels were found between slowdown stats and kernel metrics. '
+            'Please verify that the collected slowdown kernels and kernel metric CSV come from compatible runs.'
+        )
 
-# Convert the merged data list to a DataFrame
-merged_df = pd.DataFrame(merged_data)
+    return merged_df.drop(columns=[_HELPER_CANONICAL_COL, _HELPER_OCCURRENCE_COL])
 
-# Save the merged result to a new CSV at the specified location
-merged_df.to_csv(output_path, index=False)
 
-print(f"Merged file saved to: {output_path}")
+def main() -> None:
+    parser = argparse.ArgumentParser(description='Merge slowdown Excel and kernel metrics CSV based on normalized kernel names.')
+    parser.add_argument('--output', type=str, default='merged_file.csv', help='Path to save the merged CSV file.')
+    args = parser.parse_args()
+
+    slowdown_df = pd.read_excel(SLOWDOWN_FILE)
+    features_df = pd.read_csv(FEATURES_FILE)
+
+    print('slowdown_df.head()', slowdown_df.head())
+    print('features_df.head()', features_df.head())
+
+    merged_df = merge_features(slowdown_df, features_df)
+    output_path = Path(args.output)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    merged_df.to_csv(output_path, index=False)
+
+    print(f'Merged rows: {len(merged_df)}')
+    print(f'Merged kernels: {merged_df[SLOWDOWN_KERNEL_COL].nunique()} slowdown names, {merged_df[FEATURES_KERNEL_COL].nunique()} feature names')
+    print(f'Merged file saved to: {output_path}')
+
+
+if __name__ == '__main__':
+    main()
